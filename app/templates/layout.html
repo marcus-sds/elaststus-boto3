@@ -1,0 +1,140 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+        <title>Elastatus</title>
+
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+        <style type="text/css">
+          body {
+           padding-top: 60px;
+           padding-bottom: 40px;
+        }
+        </style>
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap-responsive.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/DT_bootstrap.css') }}">
+        <script type="text/javascript" charset="utf-8" language="javascript" src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+
+        <script type="text/javascript" charset="utf-8" language="javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+        <script type="text/javascript" charset="utf-8" language="javascript" src="{{ url_for('static', filename='js/jquery.dataTables.js') }}"></script>
+        <script type="text/javascript" charset="utf-8" language="javascript" src="{{ url_for('static', filename='js/DT_bootstrap.js') }}"></script>
+
+    </head>
+    <body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="{{ url_for('elastatus.index') }}">Elastatus</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <li class="dropdown">
+                <a href="" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-tasks icon-white"></i>
+                  {% set current_account = request.view_args.get('account') %}
+                  {% set current_region = request.view_args.get('region') %}
+                  {% set current_service = request.url_rule.rule.split('/')[3] %}
+                  {% if current_account == '' %}
+                  Accounts
+                  {% elif config['CONFIG']['accounts'].has_key(current_account) %}
+                  {{ current_account.capitalize() }}
+                  {% else %}
+                  Accounts
+                  {% endif %} <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                {% for account in config['CONFIG']['accounts'] %}
+                  {% if current_service == 'sg' %}
+                  <li><a href="{{ url_for('elastatus.ec2', account=current_account, region=current_region) }}">{{ account.capitalize() }}</a></li>
+                  {% else %}
+                  {% set args = request.view_args.copy() %}
+                  {% do args.update({'account': account}) %}
+                  <li><a href="{{ url_for('elastatus.'+current_service, **args) }}">{{ account.capitalize() }}</a></li>
+                  {% endif %}
+                {% endfor %}
+                </ul>
+              </li>
+              <li class="dropdown">
+                <a href="" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-globe icon-white"></i>
+                  {{ current_region }} <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                {% for region in config['CONFIG']['regions'] %}
+                  {% if current_service == 'sg' %}
+                  <li><a href="{{ url_for('elastatus.ec2', account=current_account, region=current_region) }}">{{ region }}</a></li>
+                  {% else %}
+                  {% set args = request.view_args.copy() %}
+                  {% do args.update({'region': region}) %}
+                  <li><a href="{{ url_for('elastatus.'+current_service, **args) }}">{{ region }}</a></li>
+                  {% endif %}
+                {% endfor %}
+                </ul>
+              </li>
+
+              <li class="dropdown">
+                <a href="" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-hdd icon-white"></i>
+                  Compute<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                {% for service in config['CONFIG']['aws']['compute'] %}
+                  <li><a href="{{ url_for('elastatus.'+service, account=current_account, region=current_region) }}">{{ service.upper() }}</a></li>
+                {% endfor %}
+                </ul>
+              </li>
+
+              <li class="dropdown">
+                <a href="" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-tasks icon-white"></i>
+                  Database<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                {% for service in config['CONFIG']['aws']['database'] %}
+                  <li><a href="{{ url_for('elastatus.'+service, account=current_account, region=current_region) }}">{{ service.upper() }}</a></li>
+                {% endfor %}
+                </ul>
+              </li>
+
+              <li class="dropdown">
+                <a href="" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-inbox icon-white"></i>
+                  App Services<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                {% for service in config['CONFIG']['aws']['services'] %}
+                  <li>
+                    {% if service == "route53" %}
+                    <a href="{{ url_for('elastatus.'+service, account=config['CONFIG']['route53']['account'], region=current_region) }}">{{ service.upper() }}</a></li>
+                    {% else %}
+                    <a href="{{ url_for('elastatus.'+service, account=current_account, region=current_region) }}">{{ service.upper() }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                </ul>
+              </li>
+
+              <li class="dropdown">
+                <a href="" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-tags icon-white"></i>
+                  Deployments<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                {% for service in config['CONFIG']['aws']['deployments'] %}
+                  <li><a href="{{ url_for('elastatus.'+service, account=current_account, region=current_region) }}">{{ service.upper() }}</a></li>
+                {% endfor %}
+                </ul>
+              </li>
+
+              {% if request.blueprint == 'admin' %}
+                <li class="active">
+              {% else %}
+                <li>
+              {% endif %}
+              <a href="{{ url_for('admin.index') }}"><i class="icon-wrench icon-white"></i> Admin</a>
+            </li>
+
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+    {% block content %}
+    {% endblock %}
+
+  </body>
+</html>

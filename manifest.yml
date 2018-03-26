@@ -1,0 +1,9 @@
+---
+applications:
+- name: elastatus
+  memory: 256M
+  disk_quota: 256M
+  host: elastatus
+  timeout: 180
+  buildpack: python_buildpack
+  health-check-type: port

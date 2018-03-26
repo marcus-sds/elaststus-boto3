@@ -1,0 +1,46 @@
+accounts:
+    account1:
+        aws_access_key_id: 'XXXXXXXXXXXXXXXXXXXXXXXXXX'
+        aws_secret_access_key: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+    account2:
+        aws_access_key_id: 'XXXXXXXXXXXXXXXXXXXXXXXXXX'
+        aws_secret_access_key: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+    account3:
+        aws_access_key_id: 'XXXXXXXXXXXXXXXXXXXXXXXXXX'
+        aws_secret_access_key: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+
+regions: ['eu-west-1','us-east-1']
+
+aws: 
+    compute: ['ec2', 'ebs', 'snapshots', elb', 'autoscale']
+    database: ['rds','dynamodb', 'elasticache', 'redshift']
+    deployments: ['cloudformation', 'sgaudit']
+    services: ['route53', 'sqs', 'sns']
+
+
+default_account: 'account1'
+default_region: 'eu-west-1'
+default_service: 'ec2'
+
+
+route53:
+    account: 'account1'
+    domain: 'mydomain'
+    zone_id: 'myzoneid'
+
+sgaudit:
+    excluded_groups: ['ignore_this_group']
+    excluded_ips: ['0.0.0.0/0']
+    cache_timeout: 600
+
+
+admin:
+    username: 'admin'
+    password: 'XXXXXXXXXXX'
+    enable_email: False
+    email_to: ['test@test.com']
+    email_from: 'elastatus@test.com'
+
+jobs:
+    enabled: False
+

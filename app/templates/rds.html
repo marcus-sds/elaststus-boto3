@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container-fluid" style="margin-top: 10px">
+    <h2><img src="{{ url_for('static', filename='img/aws/rds.png') }}"> Relational Database Service</h2>
+    <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="info">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Hostname</th>
+            <th>Port</th>
+            <th>Engine</th>
+            <th>Storage</th>
+            <th>Zone</th>
+            <th>Multi-AZ</th>
+            <th>IOPs</th>
+            <th>Groups</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for db in db_instances.DBInstances %}
+        <tr>
+            <td>{{ db.DBInstanceIdentifier }}</td>
+            <td>{{ db.Endpoint.Address }}</a></td>
+            <td>{{ db.Endpoint.Port }}</td>
+            <td>{{ db.Engine }}</td>
+            <td>{{ db.AllocatedStorage }}</td>
+            <td>{{ db.AvailabilityZone }}</td>
+            <td>{{ db.MultiAZ }}</td>
+            <td>{{ db.Iops }}</td>
+            <td>{% for group in db.VpcSecurityGroups %}
+                <a href="{{ url_for('.sg', account=current_account, region=current_region, id=group.vpc_group) }}">{{ group.vpc_group }}</a><br>
+            {% endfor %}</td>
+            <td>{{ db.DBInstanceStatus }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+</div>
+{% endblock %}
